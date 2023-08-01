@@ -12,15 +12,15 @@ pdf_path = 'ED_8_PETROBRAS_PSP1_2021_RES_FINAL_OBJ_CONV_TITULOS.PDF'
 
 # Reading the PDF file with PyPDF2
 with open(pdf_path, mode='rb') as f:
-    reader = PyPDF2.PdfFileReader(f)
+    reader = PyPDF2.PdfReader(f)
     # Getting the number of pages
-    num_pages = reader.getNumPages()
+    num_pages = len(reader.pages)
     # Getting the document content
     pdf_content = ''
     for i in range(num_pages):
-        page = reader.getPage(i)
+        page = reader.pages[i]
         # Getting the page content
-        text = page.extractText().replace('\n', '')
+        text = page.extract_text().replace('\n', '')
         # Removing the page number and adding it to the full content
         pdf_content += text[text.find(str(i + 1)) + len(str(i + 1)):]
 
@@ -65,17 +65,18 @@ for idx, enfase in enumerate(enfases):
     for candidate in candidates:
         # Breaking the string and configuring the candidate row
         column_data = candidate.split(',')
-        insc = int(column_data[0])
+        print(column_data)
+        insc = int(column_data[0].replace(' ', ''))
         name = column_data[1].strip()
-        nf1 = float(column_data[2])
-        a1 = int(column_data[3])
-        nf2 = float(column_data[4])
-        a2 = int(column_data[5])
-        bl1 = float(column_data[6])
-        bl2 = float(column_data[7])
-        bl3 = float(column_data[8])
+        nf1 = float(column_data[2].replace(' ', ''))
+        a1 = int(column_data[3].replace(' ', ''))
+        nf2 = float(column_data[4].replace(' ', ''))
+        a2 = int(column_data[5].replace(' ', ''))
+        bl1 = float(column_data[6].replace(' ', ''))
+        bl2 = float(column_data[7].replace(' ', ''))
+        bl3 = float(column_data[8].replace(' ', ''))
         # Getting the final result through regex because the end of last element doesn't always end in the score
-        nf = float(re.search(r'\d{1,2}\.\d{2}', column_data[9]).group())
+        nf = float(re.search(r'\d{1,2}\.\d{2}', column_data[9].replace(' ', '')).group())
         candidates_rows.append([enfase['name'], insc, name, nf1, a1, nf2, a2, bl1, bl2, bl3, nf])
 
     # Creating the dataframe with the candidate results for the current enfase
